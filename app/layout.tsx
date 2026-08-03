@@ -1,23 +1,16 @@
-import Header from '@/components/Header/Header';
-import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-import './globals.css';
+import './globals.css'; // або видаліть цей імпорт, якщо стилі вже є глобально
 
-export default function RootLayout({
+export default function NotesFilterLayout({
   children,
   modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
+  modal?: React.ReactNode;
 }) {
   return (
-    <html lang="uk">
-      <body>
-        <TanStackProvider>
-          <Header />
-          {children}
-          {modal}
-        </TanStackProvider>
-      </body>
-    </html>
+    <>
+      {children}
+      {modal}
+    </>
   );
 }

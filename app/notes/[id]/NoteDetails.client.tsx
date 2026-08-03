@@ -1,39 +1,64 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { fetchNoteById } from '@/lib/api';
-import css from './NoteDetails.client.module.css';
+import Modal from '@/components/Modal/Modal';
+import css from './NotePreview.client.module.css';
 
-export default function NoteDetailsClient() {
-  const { id } = useParams<{ id: string }>();
+interface NotePreviewClientProps {
+  id: string;
+}
+
+export default function NotePreviewClient({ id }: NotePreviewClientProps) {
+  const router = useRouter();
 
   const { data: note, isLoading, isError } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: false,
+    refetchOnMount: false, // Явно додано за вимогою ментора
   });
 
-  if (isLoading) {
-    return <p>Loading, please wait...</p>;
-  }
-
-  if (isError || !note) {
-    return <p>Something went wrong.</p>;
-  }
+  const handleClose = () => {
+    router.back();
+  };
 
   return (
-    <main className={css.main}>
-      <div className={css.container}>
-        <div className={css.item}>
-          <div className={css.header}>
-            <h2>{note.title}</h2>
+    <Modal onClose={handleClose}>
+      <div className={css.modalContent}>
+        {isLoading && <div>Loading note...</div>}
+        
+        {isError && (
+          <div className={css.error}>
+            <p>Failed to load note details.</p>
+            <button type="button" onClick={handleClose}>Close</button>
           </div>
-          <p className={css.tag}>{note.tag}</p>
-          <p className={css.content}>{note.content}</p>
-          <p className={css.date}>{note.createdAt}</p>
-        </div>
+        )}
+
+        {note && (
+          <article className={css.noteDetails}>
+            <h2>{note.title}</h2>
+            <p className={css.content}>{note.content}</p>
+            
+            <div className={css.meta}>
+              <span className={css.tag}>{note.tag}</span>
+              {/* Рендеримо createdAt */}
+              <time className={css.date}>
+                {new Date(note.createdAt).toLocaleDateString()}
+              </time>
+            </div>
+
+            {/* Явна кнопка закриття */}
+            <button 
+              type="button" 
+              className={css.closeBtn} 
+              onClick={handleClose}
+            >
+              Close
+            </button>
+          </article>
+        )}
       </div>
-    </main>
+    </Modal>
   );
 }

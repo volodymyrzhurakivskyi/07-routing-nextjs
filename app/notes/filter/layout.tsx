@@ -1,16 +1,31 @@
-import React from 'react';
-import css from './LayoutNotes.module.css';
+import type { Metadata } from 'next';
+import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
+import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
+import '@/app/globals.css';
 
-interface FilterLayoutProps {
+export const metadata: Metadata = {
+  title: 'NoteHub',
+  description: 'Manage your notes efficiently',
+};
+
+export default function RootLayout({
+  children,
+  modal,
+}: {
   children: React.ReactNode;
-  sidebar: React.ReactNode;
-}
-
-export default function FilterLayout({ children, sidebar }: FilterLayoutProps) {
+  modal: React.ReactNode;
+}) {
   return (
-    <section className={css.container}>
-      <aside className={css.sidebar}>{sidebar}</aside>
-      <div className={css.notesWrapper}>{children}</div>
-    </section>
+    <html lang="uk">
+      <body>
+        <TanStackProvider>
+          <Header />
+          <main>{children}</main>
+          {modal}
+          <Footer />
+        </TanStackProvider>
+      </body>
+    </html>
   );
 }
