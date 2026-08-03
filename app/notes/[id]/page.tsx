@@ -21,7 +21,8 @@ export default async function NoteDetailsPage({ params }: NoteDetailsPageProps) 
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient />
+      {/* 🟢 Передаємо id сюди: */}
+      <NoteDetailsClient id={id} />
     </HydrationBoundary>
   );
 }
