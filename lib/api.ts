@@ -1,12 +1,21 @@
 import axios from 'axios';
 import type { Note, NewNote } from '@/types/note';
 
-// Налаштовуємо базовий екземпляр Axios
+// Створюємо базовий екземпляр без жорстко прописаних заголовків
 const noteApi = axios.create({
   baseURL: 'https://notehub-public.goit.study/api',
-  headers: {
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,
-  },
+});
+
+// Додаємо інтерцептор, який підставляє токен ПЕРЕД кожним запитом
+noteApi.interceptors.request.use((config) => {
+  const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+  
+  if (token) {
+    // NoteHub API підтримує як Bearer token, так і заголовок token
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
+  return config;
 });
 
 // Інтерфейси для параметрів та відповідей запитів
@@ -22,7 +31,7 @@ export interface FetchNotesResponse {
   totalPages: number;
 }
 
-// 1. Отримання нотаток (з пагінацією, пошуком та фільтром за тегом)
+// 1. Отримання нотаток
 export const fetchNotes = async ({
   page,
   perPage,
@@ -30,12 +39,11 @@ export const fetchNotes = async ({
   tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
   const params: Record<string, string | number> = { page, perPage };
-  
+
   if (search) {
     params.search = search;
   }
-  
-  // Додаємо tag ТІЛЬКИ якщо він існує і НЕ дорівнює 'all'
+
   if (tag && tag !== 'all') {
     params.tag = tag;
   }
@@ -60,4 +68,4 @@ export const deleteNote = async (id: string): Promise<Note> => {
 export const fetchNoteById = async (id: string): Promise<Note> => {
   const response = await noteApi.get<Note>(`/notes/${id}`);
   return response.data;
-}; 
+};
