@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { fetchNoteById } from '@/lib/api';
 import Modal from '@/components/Modal/Modal';
-import css from './NotePreview.client.module.css';
+import css from './NoteDetails.client.module.css';
 
-interface NotePreviewClientProps {
+interface NoteDetailsClientProps {
   id: string;
 }
 
-export default function NotePreviewClient({ id }: NotePreviewClientProps) {
+export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
   const router = useRouter();
 
   const { data: note, isLoading, isError } = useQuery({
@@ -60,5 +60,5 @@ export default function NotePreviewClient({ id }: NotePreviewClientProps) {
         )}
       </div>
     </Modal>
-  );
+  ); 
 }
